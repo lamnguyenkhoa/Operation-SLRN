@@ -7,7 +7,7 @@ public enum EnemyMood
     CHASING
 }
 
-public class EnemyWander : MonoBehaviour
+public class EnemyWander : UnderwaterEntity
 {
     public float moveSpeed = 2f;  // the speed at which the enemy moves
     private float rotateSpeed = 100f;  // the speed at which the enemy rotates
@@ -16,9 +16,6 @@ public class EnemyWander : MonoBehaviour
     private float walkingTimer;  // the timer to keep track of how long the enemy has been walking in one direction
     private Vector2 direction;  // the direction the enemy is currently walking in
     private Rigidbody2D rb;  // the rigidbody component of the enemy
-    public GameObject pulseEffectPrefab;
-    private float pulseTimer;
-    private float timeUntilNextPulse = 0.5f;
     private EnemyMood mood;
     private float chaseTimer;
     public float timeUntilStopChase = 10f; // Enemy stop chasing if after this time
@@ -33,11 +30,6 @@ public class EnemyWander : MonoBehaviour
         walkingTimer = Random.Range(minTime, maxTime);  // set the initial timer to a random value
         direction = Random.insideUnitCircle.normalized;  // set the initial direction to a random vector of length 1
         rb = GetComponent<Rigidbody2D>();  // get the rigidbody component
-    }
-
-    void Update()
-    {
-        pulseTimer += Time.deltaTime;
     }
 
     void FixedUpdate()
@@ -68,19 +60,11 @@ public class EnemyWander : MonoBehaviour
 
     }
 
-    public void Pulse()
+    protected override void OnTriggerEnter2D(Collider2D col)
     {
-        if (pulseTimer > timeUntilNextPulse)
-        {
-            Instantiate(pulseEffectPrefab, transform.position, Quaternion.identity);
-            pulseTimer = 0;
-        }
-    }
+        base.OnTriggerEnter2D(col);
 
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        SubmarineController submarine = col.gameObject.GetComponent<SubmarineController>();
-        if (submarine)
+        if (col.name == "SubmarineSprite")
         {
             Debug.Log("Detected");
         }
