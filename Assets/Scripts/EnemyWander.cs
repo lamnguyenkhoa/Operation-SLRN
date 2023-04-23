@@ -98,6 +98,7 @@ public class EnemyWander : UnderwaterEntity
         {
             GameManager.instance.currentSubmarineHp -= 1;
             Debug.Log("Damaged");
+            CinemachineShake.instance.ShakeCamera(5f, 0.5f, false);
         }
     }
 }
