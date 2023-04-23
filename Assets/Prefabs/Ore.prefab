@@ -77,12 +77,12 @@ SpriteRenderer:
   m_SortingLayerID: 858442055
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 729a8d5e3ec377a49ac782dfa88463db, type: 3}
   m_Color: {r: 1, g: 0.972549, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.12, y: 1.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -101,7 +101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pulseEffectPrefab: {fileID: 8668875158865517778, guid: b328e844d178fa04c84cf9d9b8545bb3, type: 3}
-  scoreGain: 100
 --- !u!50 &1907989937376952798
 Rigidbody2D:
   serializedVersion: 4
@@ -140,8 +139,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 1.12, y: 1.24}
+    newSize: {x: 1.12, y: 1.24}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0

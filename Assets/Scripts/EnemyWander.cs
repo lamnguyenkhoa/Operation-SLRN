@@ -16,7 +16,7 @@ public class EnemyWander : UnderwaterEntity
     private float rotateSpeed = 100f;  // the speed at which the enemy rotates
     public float minTime = 1f;  // the minimum time the enemy will walk in one direction
     public float maxTime = 4f;  // the maximum time the enemy will walk in one direction
-    private float wanderTimer;  // the timer to keep track of how long the enemy has been walking in one direction
+    private float wanderTimer;  // the timer to keep track of how long the enemy has been walking in one direction.
     private Vector2 wanderDirection;  // the direction the enemy is currently walking in
     private Rigidbody2D rb;  // the rigidbody component of the enemy
     private EnemyMood mood;
@@ -53,6 +53,9 @@ public class EnemyWander : UnderwaterEntity
                 {
                     wanderDirection = Random.insideUnitCircle.normalized;  // set the new direction to a random vector of length 1
                     wanderTimer = Random.Range(minTime, maxTime);  // reset the timer to a random value
+
+                    // Self pulse
+                    Pulse();
                 }
                 break;
             case EnemyMood.CHASING:
@@ -90,9 +93,9 @@ public class EnemyWander : UnderwaterEntity
     {
         base.OnTriggerEnter2D(col);
 
+        // Start chasing if submarine is closerange or submarine sonar-ed it
         if (col.name == "SubmarineSprite")
         {
-            Debug.Log("Detected");
             mood = EnemyMood.CHASING;
             moveSpeed = chaseSpeed;
         }
