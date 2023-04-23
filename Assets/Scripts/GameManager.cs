@@ -22,9 +22,23 @@ public class GameManager : MonoBehaviour
     public int currentSubmarineHp = 3;
     public int maxSubmarineHp = 3;
     public Transform submarine;
+    private float iframeTimer;
+    public float iframeDuration = 1f;
+    public int speedLevel = 1;
+    public int sonarSpeedLevel = 1;
+    public int sonarRangeLevel = 1;
+
+    [Header("SoundEffect")]
+    public AudioSource sfxAudioSource;
+    public AudioClip hullDamaged;
+    public AudioClip oreCollected;
 
     [Header("Component")]
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI sideScreenText;
+    public GameObject gameOverScreen;
+    public AudioSource bgm;
+    public AudioSource sonarBgs;
 
 
     void Awake()
@@ -50,7 +64,12 @@ public class GameManager : MonoBehaviour
         {
             SpawnNewEntity(smallEnemyPrefab);
         }
+        RefreshSideScreen();
+    }
 
+    void Update()
+    {
+        iframeTimer += Time.deltaTime;
     }
 
     public void CollectOre()
@@ -93,5 +112,44 @@ public class GameManager : MonoBehaviour
 
         GameObject go = Instantiate(prefab, entityHolder);
         go.transform.position = new Vector3(randomX, randomY, 0);
+    }
+
+    public void SubmarineDamaged()
+    {
+        if (iframeTimer < iframeDuration)
+        {
+            return;
+        }
+
+        sfxAudioSource.PlayOneShot(hullDamaged);
+
+        currentSubmarineHp -= 1;
+        RefreshSideScreen();
+        CinemachineShake.instance.ShakeCamera(5f, 0.5f, false);
+        if (currentSubmarineHp <= 0)
+        {
+            GameOver();
+        }
+        else
+        {
+            iframeTimer = 0;
+        }
+    }
+
+    public void GameOver()
+    {
+        gameOverScreen.SetActive(true);
+        submarine.gameObject.SetActive(false);
+        sonarBgs.Stop();
+    }
+
+    public void RefreshSideScreen()
+    {
+        string hullText = "".PadRight(currentSubmarineHp, '|');
+        string engineText = "".PadRight(speedLevel, '|');
+        string sonarSpeedText = "".PadRight(sonarSpeedLevel, '|');
+        string sonarRangeText = "".PadRight(sonarRangeLevel, '|');
+
+        sideScreenText.text = $"hull\n{hullText}\nengine\n{engineText}\nsonar-speed\n{sonarSpeedText}\nsonar-range\n{sonarRangeText}";
     }
 }

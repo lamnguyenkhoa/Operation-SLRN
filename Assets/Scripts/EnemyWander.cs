@@ -9,7 +9,10 @@ public enum EnemyMood
 
 public class EnemyWander : UnderwaterEntity
 {
-    public float moveSpeed = 2f;  // the speed at which the enemy moves
+    public float moveSpeed = 2f;
+    public float wanderSpeed = 2f;
+    public float chaseSpeed = 4f;
+
     private float rotateSpeed = 100f;  // the speed at which the enemy rotates
     public float minTime = 1f;  // the minimum time the enemy will walk in one direction
     public float maxTime = 4f;  // the maximum time the enemy will walk in one direction
@@ -64,6 +67,7 @@ public class EnemyWander : UnderwaterEntity
                 {
                     chaseTimer = 0f;
                     mood = EnemyMood.TIRED;
+                    moveSpeed = 0f;
                 }
                 break;
             case EnemyMood.TIRED:
@@ -74,6 +78,7 @@ public class EnemyWander : UnderwaterEntity
                     wanderTimer = Random.Range(minTime, maxTime);
                     wanderDirection = Random.insideUnitCircle.normalized;
                     mood = EnemyMood.WANDERING;
+                    moveSpeed = wanderSpeed;
                 }
                 break;
             default:
@@ -89,6 +94,7 @@ public class EnemyWander : UnderwaterEntity
         {
             Debug.Log("Detected");
             mood = EnemyMood.CHASING;
+            moveSpeed = chaseSpeed;
         }
     }
 
@@ -96,9 +102,7 @@ public class EnemyWander : UnderwaterEntity
     {
         if (coll.collider.name == "SubmarineSprite")
         {
-            GameManager.instance.currentSubmarineHp -= 1;
-            Debug.Log("Damaged");
-            CinemachineShake.instance.ShakeCamera(5f, 0.5f, false);
+            GameManager.instance.SubmarineDamaged();
         }
     }
 }

@@ -18,7 +18,7 @@ public class SubmarineController : MonoBehaviour
 
     void Update()
     {
-        coordText.text = $"X:{transform.position.x} Y:{transform.position.y}";
+        coordText.text = $"X:{transform.position.x}    Y:{transform.position.y}";
     }
 
     void FixedUpdate()
