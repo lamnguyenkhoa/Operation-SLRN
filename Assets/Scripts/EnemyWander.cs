@@ -35,16 +35,18 @@ public class EnemyWander : UnderwaterEntity
 
     void FixedUpdate()
     {
+        float angle;
+        float targetAngle;
+
         switch (mood)
         {
             case EnemyMood.WANDERING:
                 // move the enemy in the current direction
-                Vector2 velocity = wanderDirection * moveSpeed;
-                rb.velocity = velocity;
+                rb.velocity = wanderDirection * moveSpeed;
 
                 // rotate the enemy to face the current direction
-                float angle = Mathf.Atan2(wanderDirection.y, wanderDirection.x) * Mathf.Rad2Deg - 90f;
-                float targetAngle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, angle, rotateSpeed * Time.deltaTime);
+                angle = Mathf.Atan2(wanderDirection.y, wanderDirection.x) * Mathf.Rad2Deg - 90f;
+                targetAngle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, angle, rotateSpeed * Time.deltaTime);
                 transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
 
                 // decrement the timer and change direction if the timer has expired
@@ -64,6 +66,11 @@ public class EnemyWander : UnderwaterEntity
 
                 // move towards the target
                 rb.velocity = chaseDirection * moveSpeed;
+
+                // rotate the enemy to face the current direction
+                angle = Mathf.Atan2(chaseDirection.y, chaseDirection.x) * Mathf.Rad2Deg - 90f;
+                targetAngle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, angle, rotateSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
 
                 chaseTimer += Time.fixedDeltaTime;
                 if (chaseTimer > timeUntilStopChase)

@@ -20,9 +20,6 @@ public class SubmarineController : MonoBehaviour
     public GameObject surroundLight;
     public GameObject sonarRotate;
 
-
-
-
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
