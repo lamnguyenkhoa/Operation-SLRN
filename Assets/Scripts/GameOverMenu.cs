@@ -19,7 +19,9 @@ public class GameOverMenu : MonoBehaviour
             RefreshRetryText();
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.E) ||
+            Input.GetKeyDown(KeyCode.Return) ||
+            Input.GetKeyDown(KeyCode.Space))
         {
             if (retry)
             {

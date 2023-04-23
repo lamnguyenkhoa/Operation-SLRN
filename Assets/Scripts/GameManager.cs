@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
     public Image blackFade;
     public AudioSource bgm;
     public AudioSource sonarBgs;
+    public GameObject hullLight;
 
 
     void Awake()
@@ -89,6 +90,7 @@ public class GameManager : MonoBehaviour
             scoreText.text = "err";
         }
         SpawnNewEntity(orePrefab);
+        sfxAudioSource.PlayOneShot(oreCollected, 0.3f);
     }
 
     public void SpawnNewEntity(GameObject prefab)
@@ -255,5 +257,15 @@ public class GameManager : MonoBehaviour
 
         // Set the final alpha value of the text
         textMeshPro.alpha = endAlpha;
+    }
+
+    public void OnToggleLightButton()
+    {
+        hullLight.SetActive(!hullLight.activeSelf);
+    }
+
+    public void OnToggleManualBook()
+    {
+        Debug.Log("Open manual book...");
     }
 }
