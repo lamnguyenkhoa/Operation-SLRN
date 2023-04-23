@@ -6,13 +6,24 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+
+    [Header("Config")]
     public int score = 0;
     public int oreScoreGain = 100;
-    public int startOreAmount = 10;
+
+    [Header("Entity")]
+    public int startOreNumber = 10;
+    public int startSmallEnemyNumber = 10;
     public GameObject orePrefab;
+    public GameObject smallEnemyPrefab;
     public Transform entityHolder;
 
+    [Header("Submarine")]
+    public int currentSubmarineHp = 3;
+    public int maxSubmarineHp = 3;
+    public Transform submarine;
 
+    [Header("Component")]
     public TextMeshProUGUI scoreText;
 
 
@@ -30,21 +41,33 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        scoreText.text = score.ToString();
-        for (int i = 0; i < startOreAmount; i++)
+        scoreText.text = score.ToString("000000000");
+        for (int i = 0; i < startOreNumber; i++)
         {
-            SpawnNewOre();
+            SpawnNewEntity(orePrefab);
         }
+        for (int i = 0; i < startSmallEnemyNumber; i++)
+        {
+            SpawnNewEntity(smallEnemyPrefab);
+        }
+
     }
 
     public void CollectOre()
     {
         score += oreScoreGain;
-        scoreText.text = score.ToString();
-        SpawnNewOre();
+        if (score < 999999999)
+        {
+            scoreText.text = score.ToString("000000000");
+        }
+        else
+        {
+            scoreText.text = "err";
+        }
+        SpawnNewEntity(orePrefab);
     }
 
-    public void SpawnNewOre()
+    public void SpawnNewEntity(GameObject prefab)
     {
         float randomX = 0;
         float randomY = 0;
@@ -68,7 +91,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        GameObject go = Instantiate(orePrefab, entityHolder);
+        GameObject go = Instantiate(prefab, entityHolder);
         go.transform.position = new Vector3(randomX, randomY, 0);
     }
 }
