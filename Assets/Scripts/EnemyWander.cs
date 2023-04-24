@@ -100,11 +100,14 @@ public class EnemyWander : UnderwaterEntity
     {
         base.OnTriggerEnter2D(col);
 
-        // Start chasing if submarine is closerange or submarine sonar-ed it
+        // Start chasing if submarine is close range with engine on.
         if (col.name == "SubmarineSprite")
         {
-            mood = EnemyMood.CHASING;
-            moveSpeed = chaseSpeed;
+            if (col.transform.parent.GetComponent<SubmarineController>().engineEnable)
+            {
+                mood = EnemyMood.CHASING;
+                moveSpeed = chaseSpeed;
+            }
         }
     }
 

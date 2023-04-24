@@ -6,6 +6,7 @@ public class GameOverMenu : MonoBehaviour
 {
     public bool retry = true;
     public TextMeshProUGUI retryText;
+    public GameObject[] cracks;
     void OnEnable()
     {
         RefreshRetryText();
@@ -45,6 +46,14 @@ public class GameOverMenu : MonoBehaviour
         else
         {
             retryText.text = "Retry? \nYES \n-NO-";
+        }
+    }
+
+    public void HideCracks()
+    {
+        foreach (GameObject crack in cracks)
+        {
+            crack.SetActive(false);
         }
     }
 }

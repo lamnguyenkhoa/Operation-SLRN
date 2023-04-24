@@ -43,7 +43,7 @@ public class PulsingEffect : MonoBehaviour
                 }
                 else if (destroyAfterDone)
                 {
-                    Destroy(this.gameObject, 1f);
+                    Destroy(this.gameObject, 0.5f);
                 }
 
             }

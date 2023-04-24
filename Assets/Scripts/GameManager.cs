@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,6 +30,9 @@ public class GameManager : MonoBehaviour
     public int speedLevel = 1;
     public int sonarSpeedLevel = 1;
     public int sonarRangeLevel = 1;
+    public float oxygenTimeLeft;
+    public float oxygenMaxTime = 600f; // 10 minute
+
 
     [Header("SoundEffect")]
     public AudioSource sfxAudioSource;
@@ -40,12 +44,15 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI sideScreenText;
     public TextMeshProUGUI coordText;
     public TextMeshProUGUI helpText;
+    public TextMeshProUGUI oxygenText;
     public GameObject gameOverScreen;
     public GameObject startScreen;
     public Image blackFade;
     public AudioSource bgm;
     public AudioSource sonarBgs;
     public GameObject hullLight;
+    public Gradient oxygenLightGradient;
+    public Light2D oxygenLight;
 
 
     void Awake()
@@ -67,14 +74,28 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(FadeInAndOutTextMesh(textMeshPro, 0.5f, 2f));
         }
+        oxygenTimeLeft = oxygenMaxTime;
     }
 
     void Update()
     {
-        iframeTimer += Time.deltaTime;
         if (!startedGame && Input.GetKeyDown(KeyCode.E))
         {
             StartGame();
+        }
+        if (startedGame)
+        {
+            iframeTimer += Time.deltaTime;
+            // Oxygen stuff
+            oxygenTimeLeft -= Time.deltaTime;
+            float t = 1 - (oxygenTimeLeft / oxygenMaxTime);
+            oxygenLight.color = oxygenLightGradient.Evaluate(t);
+            oxygenText.text = oxygenTimeLeft.ToString("F0");
+            if (oxygenTimeLeft <= 0f)
+            {
+                GameOver(true);
+            }
+
         }
     }
 
@@ -90,6 +111,13 @@ public class GameManager : MonoBehaviour
             scoreText.text = "err";
         }
         SpawnNewEntity(orePrefab);
+        // 50% change to spawn a new small monster
+        float rand = Random.Range(0f, 1f);
+        if (rand > 0.5f)
+        {
+            Debug.Log("Spawn new red gfish");
+            SpawnNewEntity(smallEnemyPrefab);
+        }
         sfxAudioSource.PlayOneShot(oreCollected, 0.3f);
     }
 
@@ -135,7 +163,7 @@ public class GameManager : MonoBehaviour
         CinemachineShake.instance.ShakeCamera(5f, 0.5f, false);
         if (currentSubmarineHp <= 0)
         {
-            GameOver();
+            GameOver(false);
         }
         else
         {
@@ -143,9 +171,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GameOver()
+    public void GameOver(bool hideCrack)
     {
         gameOverScreen.SetActive(true);
+        // If gameover not because of hull damaged, dont show crack
+        if (hideCrack)
+            gameOverScreen.GetComponent<GameOverMenu>().HideCracks();
         submarine.gameObject.SetActive(false);
         sonarBgs.Stop();
     }
@@ -167,6 +198,7 @@ public class GameManager : MonoBehaviour
         sideScreenText.gameObject.SetActive(true);
         coordText.gameObject.SetActive(true);
         helpText.gameObject.SetActive(true);
+        oxygenText.gameObject.SetActive(true);
         startScreen.SetActive(false);
         startedGame = true;
         submarine.gameObject.SetActive(true);

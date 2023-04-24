@@ -98,8 +98,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pulseScale: 0
-  minPulse: 1
-  maxPulse: 3
+  minPulse: 0.5
+  maxPulse: 1.5
   pulseSpeed: 25
   maxAlpha: 1
   timer: 0
