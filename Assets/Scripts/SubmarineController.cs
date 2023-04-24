@@ -30,13 +30,13 @@ public class SubmarineController : MonoBehaviour
     {
         coordText.text = $"X:{transform.position.x}    Y:{transform.position.y}";
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && !GameManager.instance.disableSubmarineControl)
         {
             sonarEnable = !sonarEnable;
             sonarLight.volumeIntensityEnabled = sonarEnable;
             sonarRotate.SetActive(sonarEnable);
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && !GameManager.instance.disableSubmarineControl)
         {
             engineEnable = !engineEnable;
             engineLight.volumeIntensityEnabled = engineEnable;
@@ -55,8 +55,17 @@ public class SubmarineController : MonoBehaviour
     void FixedUpdate()
     {
         // Get the horizontal and vertical input axes
-        moveHorizontal = Input.GetAxis("Horizontal");
-        moveVertical = Input.GetAxis("Vertical");
+        if (!GameManager.instance.disableSubmarineControl)
+        {
+            moveHorizontal = Input.GetAxis("Horizontal");
+            moveVertical = Input.GetAxis("Vertical");
+        }
+        else
+        {
+            moveHorizontal = 0f;
+            moveVertical = 0f;
+        }
+
 
         // Turn on button light according to movement for
         buttonLights[0].intensity = 0;

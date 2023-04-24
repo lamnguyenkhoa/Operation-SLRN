@@ -19,11 +19,11 @@ public class HighscoreText : MonoBehaviour
             GameManager.instance.score > highscore)
         {
             PlayerPrefs.SetInt("Highscore", (GameManager.instance.score));
-            highscoreText.text = "Highest score - " + GameManager.instance.score.ToString("000000000");
+            highscoreText.text = "Personal highscore - " + GameManager.instance.score.ToString("000000000");
         }
         else
         {
-            highscoreText.text = "Highest score - " + highscore.ToString("000000000");
+            highscoreText.text = "Personal highscore - " + highscore.ToString("000000000");
         }
     }
 }

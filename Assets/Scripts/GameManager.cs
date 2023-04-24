@@ -11,17 +11,17 @@ public class GameManager : MonoBehaviour
 
     [Header("Config")]
     public int score = 0;
+    public int accumulatedScore = 0;
     public int oreScoreGain = 100;
     public bool startedGame = false;
     public bool endedGame = false;
-
+    public bool isInLeaderboard = false;
 
     [Header("Entity")]
     public int startOreNumber = 20;
     public int startSmallEnemyNumber = 8;
     public int startProximityMine = 3;
     public int startEnemySubmarine = 1;
-
     public GameObject orePrefab;
     public GameObject smallEnemyPrefab;
     public GameObject proximityMinePrefab;
@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
     public int sonarRangeLevel = 1;
     public float oxygenTimeLeft;
     public float oxygenMaxTime = 600f; // 10 minute
+    public bool disableSubmarineControl = false;
+    public int upgradeCount;
+    public bool isUpgrading;
 
     [Header("Audio")]
     public AudioSource sfxAudioSource;
@@ -47,6 +50,7 @@ public class GameManager : MonoBehaviour
     public AudioClip hullDamaged;
     public AudioClip oreCollected;
     public AudioClip sonarPing;
+    public AudioClip bookFlipping;
 
     public float bgmVolume;
     public float sfxVolume;
@@ -65,6 +69,7 @@ public class GameManager : MonoBehaviour
     public Light2D oxygenLight;
     public GameObject[] objectToEnableAfterStart;
     public GameObject bookPageHolder;
+    public LootLockerManager lootLockerManager;
 
 
     void Awake()
@@ -98,10 +103,26 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (!startedGame && Input.GetKeyDown(KeyCode.E))
+        if (!startedGame)
         {
-            StartGame();
+            if (Input.GetKeyDown(KeyCode.E) && !isInLeaderboard)
+            {
+                StartGame();
+            }
+            if (Input.GetKeyDown(KeyCode.E) && isInLeaderboard)
+            {
+                isInLeaderboard = false;
+                startScreen.SetActive(true);
+                lootLockerManager.CloseLeaderboard();
+            }
+            if (Input.GetKeyDown(KeyCode.Q) && !isInLeaderboard)
+            {
+                isInLeaderboard = true;
+                startScreen.SetActive(false);
+                lootLockerManager.OpenLeaderboard();
+            }
         }
+
         if (startedGame && !endedGame)
         {
             iframeTimer += Time.deltaTime;
@@ -137,9 +158,19 @@ public class GameManager : MonoBehaviour
     public void CollectOre()
     {
         score += oreScoreGain;
+        accumulatedScore += oreScoreGain;
+
         sfxAudioSource.PlayOneShot(oreCollected, 0.3f);
         RefreshScoreText();
         SpawnNewEntity(orePrefab);
+
+        // gain 1000 for 1st upgrade, then gain another 2000 for 2nd upgrade, then 3000...
+        if (accumulatedScore >= (upgradeCount + 1) * 1000)
+        {
+            accumulatedScore = 0;
+            upgradeCount += 1;
+            OpenUpgradeMenu();
+        }
 
 
         // 70% change to spawn a new enemy
@@ -370,6 +401,7 @@ public class GameManager : MonoBehaviour
     public void OnToggleJournalBook()
     {
         bookPageHolder.SetActive(!bookPageHolder.activeSelf);
+        disableSubmarineControl = bookPageHolder.activeSelf;
     }
 
     public void ChangeBGMVolume(float value)
@@ -387,5 +419,15 @@ public class GameManager : MonoBehaviour
     public void PlaySonarPing()
     {
         sfxAudioSource.PlayOneShot(sonarPing);
+    }
+
+    public void PlayBookFlipping()
+    {
+        sfxAudioSource.PlayOneShot(bookFlipping);
+    }
+
+    public void OpenUpgradeMenu()
+    {
+        isUpgrading = true;
     }
 }

@@ -37,6 +37,8 @@ public class BookManager : MonoBehaviour
 
             allPages[leftPageIndex].SetActive(true);
             allPages[rightPageIndex].SetActive(true);
+
+            GameManager.instance.PlayBookFlipping();
         }
     }
 
@@ -53,6 +55,8 @@ public class BookManager : MonoBehaviour
 
             allPages[leftPageIndex].SetActive(true);
             allPages[rightPageIndex].SetActive(true);
+
+            GameManager.instance.PlayBookFlipping();
         }
     }
 }
