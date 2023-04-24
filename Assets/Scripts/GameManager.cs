@@ -20,10 +20,13 @@ public class GameManager : MonoBehaviour
     public int startOreNumber = 20;
     public int startSmallEnemyNumber = 8;
     public int startProximityMine = 3;
+    public int startEnemySubmarine = 1;
 
     public GameObject orePrefab;
     public GameObject smallEnemyPrefab;
     public GameObject proximityMinePrefab;
+    public GameObject enemySubmarinePrefab;
+
     public Transform entityHolder;
 
     [Header("Submarine")]
@@ -132,13 +135,30 @@ public class GameManager : MonoBehaviour
 
     public void SpawnRandomEnemy()
     {
-        // 30% for mine
-        // 70% for small monster
-        float enemyChance = Random.Range(0f, 1f);
-        if (enemyChance < 0.3f)
-            SpawnNewEntity(proximityMinePrefab);
+        if (score >= 1000)
+        {
+            // 5% for enemy submarine
+            // 25% for mine
+            // 70% for small monster
+            float enemyChance = Random.Range(0f, 1f);
+            if (enemyChance < 0.05f)
+                SpawnNewEntity(enemySubmarinePrefab);
+            else if (enemyChance < 0.3f)
+                SpawnNewEntity(proximityMinePrefab);
+            else
+                SpawnNewEntity(smallEnemyPrefab);
+        }
         else
-            SpawnNewEntity(smallEnemyPrefab);
+        {
+            // 30% for mine
+            // 70% for small monster
+            float enemyChance = Random.Range(0f, 1f);
+            if (enemyChance < 0.3f)
+                SpawnNewEntity(proximityMinePrefab);
+            else
+                SpawnNewEntity(smallEnemyPrefab);
+        }
+
     }
 
     public void SpawnNewEntity(GameObject prefab)
@@ -245,6 +265,8 @@ public class GameManager : MonoBehaviour
             SpawnNewEntity(smallEnemyPrefab);
         for (int i = 0; i < startProximityMine; i++)
             SpawnNewEntity(proximityMinePrefab);
+        for (int i = 0; i < startEnemySubmarine; i++)
+            SpawnNewEntity(enemySubmarinePrefab);
 
         RefreshSideScreen();
     }

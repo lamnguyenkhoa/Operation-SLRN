@@ -14,7 +14,7 @@ public class ProximityMine : UnderwaterEntity
         selfPulseTimer += Time.deltaTime;
         if (selfPulseTimer > selfPulseInterval)
         {
-            Pulse();
+            Pulse(true);
             selfPulseTimer = 0f;
         }
     }
@@ -36,7 +36,9 @@ public class ProximityMine : UnderwaterEntity
         else
         {
             // Mine can also used against enemy
-            if (col.GetComponent<EnemyWander>())
+            if (col.GetComponent<EnemyWander>() ||
+                col.GetComponent<Torpedo>() ||
+                col.GetComponent<EnemySubmarine>())
             {
                 Instantiate(explosionPulse, transform.position, Quaternion.identity);
                 Destroy(col.gameObject);

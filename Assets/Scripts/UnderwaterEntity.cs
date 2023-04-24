@@ -17,9 +17,9 @@ public class UnderwaterEntity : MonoBehaviour
         }
     }
 
-    public virtual void Pulse()
+    public virtual void Pulse(bool forced)
     {
-        if (pulseTimer > timeUntilNextPulse)
+        if (pulseTimer > timeUntilNextPulse || forced)
         {
             Instantiate(pulseEffectPrefab, transform.position, Quaternion.identity);
             pulseTimer = 0;
@@ -31,7 +31,7 @@ public class UnderwaterEntity : MonoBehaviour
         SonarManager sonar = col.GetComponent<SonarManager>();
         if (sonar)
         {
-            Pulse();
+            Pulse(false);
         }
     }
 }

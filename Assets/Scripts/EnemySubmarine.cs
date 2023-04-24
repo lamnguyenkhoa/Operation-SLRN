@@ -1,13 +1,6 @@
 using UnityEngine;
 
-public enum EnemyMood
-{
-    WANDERING,
-    TIRED,
-    CHASING
-}
-
-public class EnemyWander : UnderwaterEntity
+public class EnemySubmarine : UnderwaterEntity
 {
     public float moveSpeed = 2f;
     public float wanderSpeed = 2f;
@@ -21,9 +14,21 @@ public class EnemyWander : UnderwaterEntity
     private EnemyMood mood;
     private float chaseTimer;
     public float timeUntilStopChase = 10f; // Enemy stop chasing if after this time
-    public float distanceUntilStopChase = 10f; // Enemy stop chasing submarine outside this range
+    public float keepDistance = 5f; // If player distance is closer than this, the enemy submarine wont move
+    public float distanceUntilStopChase = 30f; // Enemy stop chasing submarine entirely outside this range
     private float tiredTimer;
     public float timeInTiredMood = 2f;
+    private bool continueChaseAfterTired = false;
+
+    private float selfPulseTimer;
+    public float selfPulseInterval = 2f;
+    private float shootTorpedoTimer;
+    public float shootTorpedoInterval = 5f;
+    public GameObject torpedoPrefab;
+    public Transform torpedoSpawn;
+
+
+
     void Start()
     {
         wanderTimer = Random.Range(minTime, maxTime);  // set the initial timer to a random value
@@ -35,6 +40,13 @@ public class EnemyWander : UnderwaterEntity
     {
         float angle;
         float targetAngle;
+
+        selfPulseTimer += Time.deltaTime;
+        if (selfPulseTimer > selfPulseInterval)
+        {
+            Pulse(true);
+            selfPulseTimer = 0f;
+        }
 
         switch (mood)
         {
@@ -53,30 +65,43 @@ public class EnemyWander : UnderwaterEntity
                 {
                     wanderDirection = Random.insideUnitCircle.normalized;  // set the new direction to a random vector of length 1
                     wanderTimer = Random.Range(minTime, maxTime);  // reset the timer to a random value
-
-                    // Self pulse
-                    Pulse(true);
                 }
                 break;
             case EnemyMood.CHASING:
                 // calculate the direction to move towards the target
                 Vector2 chaseDirection = (GameManager.instance.submarine.position - transform.position).normalized;
+                float distance = Vector2.Distance(transform.position, GameManager.instance.submarine.position);
 
                 // move towards the target
-                rb.velocity = chaseDirection * moveSpeed;
+                if (distance > keepDistance)
+                {
+                    rb.velocity = chaseDirection * moveSpeed;
+                }
+                else
+                {
+                    rb.velocity = Vector2.zero;
+                }
 
                 // rotate the enemy to face the current direction
                 angle = Mathf.Atan2(chaseDirection.y, chaseDirection.x) * Mathf.Rad2Deg - 90f;
                 targetAngle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, angle, rotateSpeed * Time.deltaTime);
                 transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
 
+                // Shoot torpedo
+                shootTorpedoTimer += Time.fixedDeltaTime;
+                if (shootTorpedoTimer > shootTorpedoInterval)
+                {
+                    shootTorpedoTimer = 0f;
+                    ShootTorpedo(chaseDirection, targetAngle);
+                }
+
                 chaseTimer += Time.fixedDeltaTime;
-                float distance = Vector2.Distance(transform.position, GameManager.instance.submarine.position);
                 if (chaseTimer > timeUntilStopChase | distance > distanceUntilStopChase)
                 {
                     chaseTimer = 0f;
                     mood = EnemyMood.TIRED;
                     moveSpeed = 0f;
+                    continueChaseAfterTired = false;
                 }
                 break;
             case EnemyMood.TIRED:
@@ -84,10 +109,20 @@ public class EnemyWander : UnderwaterEntity
                 if (tiredTimer > timeInTiredMood)
                 {
                     tiredTimer = 0f;
-                    wanderTimer = Random.Range(minTime, maxTime);
-                    wanderDirection = Random.insideUnitCircle.normalized;
-                    mood = EnemyMood.WANDERING;
-                    moveSpeed = wanderSpeed;
+
+                    if (continueChaseAfterTired)
+                    {
+                        mood = EnemyMood.CHASING;
+                        continueChaseAfterTired = true;
+                        moveSpeed = chaseSpeed;
+                    }
+                    else
+                    {
+                        wanderTimer = Random.Range(minTime, maxTime);
+                        wanderDirection = Random.insideUnitCircle.normalized;
+                        mood = EnemyMood.WANDERING;
+                        moveSpeed = wanderSpeed;
+                    }
                 }
                 break;
             default:
@@ -95,18 +130,25 @@ public class EnemyWander : UnderwaterEntity
         }
     }
 
+    public void ShootTorpedo(Vector3 direction, float targetAngle)
+    {
+        GameObject go = Instantiate(torpedoPrefab, torpedoSpawn.position, Quaternion.identity);
+        go.transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+        go.GetComponent<Torpedo>().SetDirection(direction.normalized);
+        go.GetComponent<Torpedo>().owner = this.gameObject;
+    }
+
     protected override void OnTriggerEnter2D(Collider2D col)
     {
         base.OnTriggerEnter2D(col);
 
-        // Start chasing if submarine is close range with engine on.
-        if (col.name == "SubmarineSprite")
+        // If get sonar-ed by player, start chasing
+        SonarManager sonar = col.GetComponent<SonarManager>();
+        if (sonar)
         {
-            if (col.transform.parent.GetComponent<SubmarineController>().engineEnable)
-            {
-                mood = EnemyMood.CHASING;
-                moveSpeed = chaseSpeed;
-            }
+            mood = EnemyMood.CHASING;
+            continueChaseAfterTired = true;
+            moveSpeed = chaseSpeed;
         }
     }
 
@@ -115,9 +157,9 @@ public class EnemyWander : UnderwaterEntity
         if (coll.collider.name == "SubmarineSprite")
         {
             GameManager.instance.SubmarineDamaged(1);
-            chaseTimer = 0f;
             mood = EnemyMood.TIRED;
             moveSpeed = 0f;
+            continueChaseAfterTired = true;
         }
     }
 }
