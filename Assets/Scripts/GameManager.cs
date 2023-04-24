@@ -41,10 +41,16 @@ public class GameManager : MonoBehaviour
     public float oxygenTimeLeft;
     public float oxygenMaxTime = 600f; // 10 minute
 
-    [Header("SoundEffect")]
+    [Header("Audio")]
     public AudioSource sfxAudioSource;
+    public AudioSource bgmAudioSource;
     public AudioClip hullDamaged;
     public AudioClip oreCollected;
+    public AudioClip sonarPing;
+
+    public float bgmVolume;
+    public float sfxVolume;
+
 
     [Header("Component")]
     public TextMeshProUGUI scoreText;
@@ -54,8 +60,6 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI oxygenText;
     public GameObject gameOverScreen;
     public GameObject startScreen;
-    public AudioSource bgm;
-    public AudioSource sonarBgs;
     public Light2D hullLight;
     public Gradient oxygenLightGradient;
     public Light2D oxygenLight;
@@ -67,6 +71,13 @@ public class GameManager : MonoBehaviour
         if (!instance)
         {
             instance = this;
+
+            // For testing fps
+            if (Application.isEditor)
+            {
+                QualitySettings.vSyncCount = 0;  // VSync must be disabled
+                Application.targetFrameRate = 120;
+            }
         }
         else
         {
@@ -231,7 +242,6 @@ public class GameManager : MonoBehaviour
         if (hideCrack)
             gameOverScreen.GetComponent<GameOverMenu>().HideCracks();
         submarine.gameObject.SetActive(false);
-        sonarBgs.Stop();
     }
 
     public void RefreshSideScreen()
@@ -255,7 +265,6 @@ public class GameManager : MonoBehaviour
         startScreen.SetActive(false);
         startedGame = true;
         submarine.gameObject.SetActive(true);
-        sonarBgs.Play();
 
         foreach (GameObject go in objectToEnableAfterStart)
         {
@@ -355,5 +364,22 @@ public class GameManager : MonoBehaviour
     public void OnToggleManualBook()
     {
         Debug.Log("Open manual book...");
+    }
+
+    public void ChangeBGMVolume(float value)
+    {
+        bgmVolume = value;
+        bgmAudioSource.volume = bgmVolume;
+    }
+
+    public void ChangeSFXVolume(float value)
+    {
+        sfxVolume = value;
+        sfxAudioSource.volume = sfxVolume;
+    }
+
+    public void PlaySonarPing()
+    {
+        sfxAudioSource.PlayOneShot(sonarPing);
     }
 }

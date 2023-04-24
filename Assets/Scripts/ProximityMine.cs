@@ -48,7 +48,7 @@ public class ProximityMine : UnderwaterEntity
                 float distance = Vector2.Distance(transform.position, GameManager.instance.submarine.position);
                 if (distance <= 5f)
                 {
-                    AudioSource.PlayClipAtPoint(explodeSfx, Camera.main.transform.position);
+                    AudioSource.PlayClipAtPoint(explodeSfx, Camera.main.transform.position, GameManager.instance.sfxVolume);
                 }
             }
         }

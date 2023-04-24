@@ -35,14 +35,6 @@ public class SubmarineController : MonoBehaviour
             sonarEnable = !sonarEnable;
             sonarLight.volumeIntensityEnabled = sonarEnable;
             sonarRotate.SetActive(sonarEnable);
-            if (sonarEnable)
-            {
-                GameManager.instance.sonarBgs.Play();
-            }
-            else
-            {
-                GameManager.instance.sonarBgs.Stop();
-            }
         }
         if (Input.GetKeyDown(KeyCode.E))
         {

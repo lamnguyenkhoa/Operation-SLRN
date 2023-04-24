@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8668875158865517777}
   - component: {fileID: 8668875158865517783}
-  - component: {fileID: 8668875158865517776}
+  - component: {fileID: 3839457212471389107}
   m_Layer: 0
   m_Name: TorpedoPulse
   m_TagString: Untagged
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8668875158865517776
+--- !u!114 &3839457212471389107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,15 +94,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8668875158865517778}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f232f0f90d1d9049857b0145364f6a1, type: 3}
+  m_Script: {fileID: 11500000, guid: e7997e320c945734191c1c180afe28e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pulseScale: 0
-  minPulse: 0.2
-  maxPulse: 0.5
-  pulseSpeed: 40
-  maxAlpha: 1
-  timer: 0
-  restTime: 0
-  loop: 0
-  destroyAfterDone: 1
+  scaleSpeed: 1.5
+  alphaSpeed: 1.5
+  startScale: 0.2
+  targetScale: 1
+  startAlpha: 1
+  targetAlpha: 0

@@ -114,6 +114,7 @@ MonoBehaviour:
   shootTorpedoInterval: 3
   torpedoPrefab: {fileID: 7943317671964344111, guid: e5c201a81ae24eb4389824ef4e480fa5, type: 3}
   torpedoSpawn: {fileID: 7932303721462276734}
+  sonarDetectedPulse: {fileID: 8668875158865517778, guid: 0696939ba9684ff4c8fd0e9c2748ebfb, type: 3}
 --- !u!50 &7754488893688585680
 Rigidbody2D:
   serializedVersion: 4
@@ -152,7 +153,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.4, y: 2.6}
+    oldSize: {x: 2.6, y: 5.4}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

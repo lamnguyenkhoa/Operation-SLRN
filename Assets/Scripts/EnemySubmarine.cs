@@ -26,6 +26,8 @@ public class EnemySubmarine : UnderwaterEntity
     public float shootTorpedoInterval = 5f;
     public GameObject torpedoPrefab;
     public Transform torpedoSpawn;
+    public GameObject sonarDetectedPulse; // bigger pulse
+
 
 
 
@@ -146,6 +148,7 @@ public class EnemySubmarine : UnderwaterEntity
         SonarManager sonar = col.GetComponent<SonarManager>();
         if (sonar)
         {
+            Instantiate(sonarDetectedPulse, transform.position, Quaternion.identity);
             mood = EnemyMood.CHASING;
             continueChaseAfterTired = true;
             moveSpeed = chaseSpeed;
