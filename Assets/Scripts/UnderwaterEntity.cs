@@ -5,12 +5,16 @@ using UnityEngine;
 public class UnderwaterEntity : MonoBehaviour
 {
     public GameObject pulseEffectPrefab;
-    protected float pulseTimer;
-    protected float timeUntilNextPulse = 0.5f;
+    protected float pulseTimer; // This pulse timer is to prevent sonar pulse the same object multiple times within a short window.
+    protected float timeUntilNextPulse = 0.3f;
 
     protected virtual void Update()
     {
         pulseTimer += Time.deltaTime;
+        if (GameManager.instance.endedGame)
+        {
+            Destroy(this.gameObject, 1f);
+        }
     }
 
     public virtual void Pulse()

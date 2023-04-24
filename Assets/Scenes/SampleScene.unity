@@ -5282,10 +5282,13 @@ MonoBehaviour:
   score: 0
   oreScoreGain: 100
   startedGame: 0
+  endedGame: 0
   startOreNumber: 30
   startSmallEnemyNumber: 8
+  startProximityMine: 3
   orePrefab: {fileID: 1907989937376952737, guid: a59f16ee5b6f4a04684cdb068ffc390e, type: 3}
   smallEnemyPrefab: {fileID: 6240013151882310255, guid: 61f05679f362fe94981aaf1df0498f29, type: 3}
+  proximityMinePrefab: {fileID: 553906612667895846, guid: b07ca8c7710550d4d9b93bc5fd869ca7, type: 3}
   entityHolder: {fileID: 1787847459}
   currentSubmarineHp: 3
   maxSubmarineHp: 3
@@ -5295,7 +5298,7 @@ MonoBehaviour:
   sonarSpeedLevel: 1
   sonarRangeLevel: 1
   oxygenTimeLeft: 0
-  oxygenMaxTime: 30
+  oxygenMaxTime: 600
   sfxAudioSource: {fileID: 2098226023}
   hullDamaged: {fileID: 8300000, guid: 3ae0348d57256a046af45bf4ef55eb9d, type: 3}
   oreCollected: {fileID: 8300000, guid: 7f386a058f27edb4caf26b958d0622a4, type: 3}

@@ -13,12 +13,17 @@ public class GameManager : MonoBehaviour
     public int score = 0;
     public int oreScoreGain = 100;
     public bool startedGame = false;
+    public bool endedGame = false;
+
 
     [Header("Entity")]
-    public int startOreNumber = 10;
-    public int startSmallEnemyNumber = 10;
+    public int startOreNumber = 20;
+    public int startSmallEnemyNumber = 8;
+    public int startProximityMine = 3;
+
     public GameObject orePrefab;
     public GameObject smallEnemyPrefab;
+    public GameObject proximityMinePrefab;
     public Transform entityHolder;
 
     [Header("Submarine")]
@@ -32,7 +37,6 @@ public class GameManager : MonoBehaviour
     public int sonarRangeLevel = 1;
     public float oxygenTimeLeft;
     public float oxygenMaxTime = 600f; // 10 minute
-
 
     [Header("SoundEffect")]
     public AudioSource sfxAudioSource;
@@ -83,7 +87,7 @@ public class GameManager : MonoBehaviour
         {
             StartGame();
         }
-        if (startedGame)
+        if (startedGame && !endedGame)
         {
             iframeTimer += Time.deltaTime;
             // Oxygen stuff
@@ -95,13 +99,11 @@ public class GameManager : MonoBehaviour
             {
                 GameOver(true);
             }
-
         }
     }
 
-    public void CollectOre()
+    public void RefreshScoreText()
     {
-        score += oreScoreGain;
         if (score < 999999999)
         {
             scoreText.text = score.ToString("000000000");
@@ -110,15 +112,33 @@ public class GameManager : MonoBehaviour
         {
             scoreText.text = "err";
         }
-        SpawnNewEntity(orePrefab);
-        // 50% change to spawn a new small monster
-        float rand = Random.Range(0f, 1f);
-        if (rand > 0.5f)
-        {
-            Debug.Log("Spawn new red gfish");
-            SpawnNewEntity(smallEnemyPrefab);
-        }
+    }
+
+    public void CollectOre()
+    {
+        score += oreScoreGain;
         sfxAudioSource.PlayOneShot(oreCollected, 0.3f);
+        RefreshScoreText();
+        SpawnNewEntity(orePrefab);
+
+
+        // 70% change to spawn a new enemy
+        float spawnChance = Random.Range(0f, 1f);
+        if (spawnChance < 0.7f)
+        {
+            SpawnRandomEnemy();
+        }
+    }
+
+    public void SpawnRandomEnemy()
+    {
+        // 30% for mine
+        // 70% for small monster
+        float enemyChance = Random.Range(0f, 1f);
+        if (enemyChance < 0.3f)
+            SpawnNewEntity(proximityMinePrefab);
+        else
+            SpawnNewEntity(smallEnemyPrefab);
     }
 
     public void SpawnNewEntity(GameObject prefab)
@@ -136,7 +156,11 @@ public class GameManager : MonoBehaviour
             Collider2D hitColliders = Physics2D.OverlapCircle(new Vector2(randomX, randomY), 0.5f);
             if (!hitColliders)
             {
-                goodSpawnLocation = true;
+                // Spawn not too close to submarine
+                if (Vector2.Distance(new Vector2(randomX, randomY), submarine.transform.position) > 5f)
+                {
+                    goodSpawnLocation = true;
+                }
             }
             retryCount += 1;
             if (retryCount > 10)
@@ -149,7 +173,7 @@ public class GameManager : MonoBehaviour
         go.transform.position = new Vector3(randomX, randomY, 0);
     }
 
-    public void SubmarineDamaged()
+    public void SubmarineDamaged(int damageAmount)
     {
         if (iframeTimer < iframeDuration)
         {
@@ -158,9 +182,17 @@ public class GameManager : MonoBehaviour
 
         sfxAudioSource.PlayOneShot(hullDamaged);
 
-        currentSubmarineHp -= 1;
+        currentSubmarineHp -= damageAmount;
+        currentSubmarineHp = Mathf.Clamp(currentSubmarineHp, 0, maxSubmarineHp);
         RefreshSideScreen();
-        CinemachineShake.instance.ShakeCamera(5f, 0.5f, false);
+        if (damageAmount >= 100)
+        {
+            CinemachineShake.instance.ShakeCamera(10f, 1f, false);
+        }
+        else
+        {
+            CinemachineShake.instance.ShakeCamera(5f, 0.5f, false);
+        }
         if (currentSubmarineHp <= 0)
         {
             GameOver(false);
@@ -173,6 +205,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver(bool hideCrack)
     {
+        endedGame = true;
         gameOverScreen.SetActive(true);
         // If gameover not because of hull damaged, dont show crack
         if (hideCrack)
@@ -193,7 +226,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        scoreText.text = score.ToString("000000000");
+        RefreshScoreText();
         scoreText.gameObject.SetActive(true);
         sideScreenText.gameObject.SetActive(true);
         coordText.gameObject.SetActive(true);
@@ -207,13 +240,12 @@ public class GameManager : MonoBehaviour
 
         // Spawn stuff
         for (int i = 0; i < startOreNumber; i++)
-        {
             SpawnNewEntity(orePrefab);
-        }
         for (int i = 0; i < startSmallEnemyNumber; i++)
-        {
             SpawnNewEntity(smallEnemyPrefab);
-        }
+        for (int i = 0; i < startProximityMine; i++)
+            SpawnNewEntity(proximityMinePrefab);
+
         RefreshSideScreen();
     }
 

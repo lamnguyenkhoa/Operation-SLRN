@@ -115,7 +115,7 @@ public class EnemyWander : UnderwaterEntity
     {
         if (coll.collider.name == "SubmarineSprite")
         {
-            GameManager.instance.SubmarineDamaged();
+            GameManager.instance.SubmarineDamaged(1);
         }
     }
 }
