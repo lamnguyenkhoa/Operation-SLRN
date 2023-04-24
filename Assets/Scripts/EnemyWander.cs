@@ -12,7 +12,6 @@ public class EnemyWander : UnderwaterEntity
     public float moveSpeed = 2f;
     public float wanderSpeed = 2f;
     public float chaseSpeed = 4f;
-
     private float rotateSpeed = 100f;  // the speed at which the enemy rotates
     public float minTime = 1f;  // the minimum time the enemy will walk in one direction
     public float maxTime = 4f;  // the maximum time the enemy will walk in one direction
@@ -73,7 +72,8 @@ public class EnemyWander : UnderwaterEntity
                 transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
 
                 chaseTimer += Time.fixedDeltaTime;
-                if (chaseTimer > timeUntilStopChase)
+                float distance = Vector2.Distance(transform.position, GameManager.instance.submarine.position);
+                if (chaseTimer > timeUntilStopChase | distance > distanceUntilStopChase)
                 {
                     chaseTimer = 0f;
                     mood = EnemyMood.TIRED;
@@ -116,6 +116,9 @@ public class EnemyWander : UnderwaterEntity
         if (coll.collider.name == "SubmarineSprite")
         {
             GameManager.instance.SubmarineDamaged(1);
+            chaseTimer = 0f;
+            mood = EnemyMood.TIRED;
+            moveSpeed = 0f;
         }
     }
 }

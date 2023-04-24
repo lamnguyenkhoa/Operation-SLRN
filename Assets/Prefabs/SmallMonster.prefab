@@ -107,8 +107,8 @@ MonoBehaviour:
   minTime: 2
   maxTime: 4
   timeUntilStopChase: 10
-  distanceUntilStopChase: 10
-  timeInTiredMood: 2
+  distanceUntilStopChase: 20
+  timeInTiredMood: 1
 --- !u!50 &6240013151882310224
 Rigidbody2D:
   serializedVersion: 4
@@ -193,4 +193,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 5
+  m_Radius: 6
