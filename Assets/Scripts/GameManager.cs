@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
     public Gradient oxygenLightGradient;
     public Light2D oxygenLight;
     public GameObject[] objectToEnableAfterStart;
+    public GameObject bookPageHolder;
 
 
     void Awake()
@@ -112,6 +113,11 @@ public class GameManager : MonoBehaviour
             if (oxygenTimeLeft <= 0f)
             {
                 GameOver(true);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                OnToggleJournalBook();
             }
         }
     }
@@ -361,9 +367,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnToggleManualBook()
+    public void OnToggleJournalBook()
     {
-        Debug.Log("Open manual book...");
+        bookPageHolder.SetActive(!bookPageHolder.activeSelf);
     }
 
     public void ChangeBGMVolume(float value)
