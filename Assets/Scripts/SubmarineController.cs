@@ -67,18 +67,18 @@ public class SubmarineController : MonoBehaviour
         moveVertical = Input.GetAxis("Vertical");
 
         // Turn on button light according to movement for
-        buttonLights[0].volumeIntensityEnabled = false;
-        buttonLights[1].volumeIntensityEnabled = false;
-        buttonLights[2].volumeIntensityEnabled = false;
-        buttonLights[3].volumeIntensityEnabled = false;
+        buttonLights[0].intensity = 0;
+        buttonLights[1].intensity = 0;
+        buttonLights[2].intensity = 0;
+        buttonLights[3].intensity = 0;
         if (moveHorizontal < 0)
-            buttonLights[0].volumeIntensityEnabled = true;
+            buttonLights[0].intensity = 1f;
         else if (moveHorizontal > 0)
-            buttonLights[1].volumeIntensityEnabled = true;
+            buttonLights[1].intensity = 1f;
         if (moveVertical < 0)
-            buttonLights[2].volumeIntensityEnabled = true;
+            buttonLights[2].intensity = 1f;
         else if (moveVertical > 0)
-            buttonLights[3].volumeIntensityEnabled = true;
+            buttonLights[3].intensity = 1f;
 
         // Move the player based on the input axes
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);

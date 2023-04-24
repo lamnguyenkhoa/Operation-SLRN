@@ -54,12 +54,12 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI oxygenText;
     public GameObject gameOverScreen;
     public GameObject startScreen;
-    public Image blackFade;
     public AudioSource bgm;
     public AudioSource sonarBgs;
-    public GameObject hullLight;
+    public Light2D hullLight;
     public Gradient oxygenLightGradient;
     public Light2D oxygenLight;
+    public GameObject[] objectToEnableAfterStart;
 
 
     void Awake()
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         TextMeshProUGUI[] textMeshPros = startScreen.GetComponentsInChildren<TextMeshProUGUI>();
         foreach (TextMeshProUGUI textMeshPro in textMeshPros)
         {
-            StartCoroutine(FadeInAndOutTextMesh(textMeshPro, 0.5f, 2f));
+            StartCoroutine(FadeInAndOutTextMesh(textMeshPro, 0.2f, 2f));
         }
         oxygenTimeLeft = oxygenMaxTime;
     }
@@ -255,8 +255,14 @@ public class GameManager : MonoBehaviour
         startScreen.SetActive(false);
         startedGame = true;
         submarine.gameObject.SetActive(true);
-        StartCoroutine(FadeOutImage(blackFade, 2f));
         sonarBgs.Play();
+
+        foreach (GameObject go in objectToEnableAfterStart)
+        {
+            go.SetActive(true);
+        }
+
+        StartCoroutine(FadeIntensityLight2D(hullLight, hullLight.intensity, 2f, 2f));
 
         // Spawn stuff
         for (int i = 0; i < startOreNumber; i++)
@@ -271,23 +277,18 @@ public class GameManager : MonoBehaviour
         RefreshSideScreen();
     }
 
-    public IEnumerator FadeOutImage(Image image, float fadeDuration)
+    public IEnumerator FadeIntensityLight2D(Light2D light, float startIntensity, float endIntensity, float duration)
     {
-        // Get the initial alpha of the image
-        float startingAlpha = image.color.a;
-
         // Keep track of the elapsed time
         float elapsedTime = 0.0f;
 
-        while (elapsedTime < fadeDuration)
+        while (elapsedTime < duration)
         {
-            // Calculate the current alpha value
-            float currentAlpha = Mathf.Lerp(startingAlpha, 0.0f, elapsedTime / fadeDuration);
+            // Calculate the current intensity value
+            float currentIntensity = Mathf.Lerp(startIntensity, endIntensity, elapsedTime / duration);
 
-            // Set the alpha value of the image
-            Color newColor = image.color;
-            newColor.a = currentAlpha;
-            image.color = newColor;
+            // Set the intensity value of the light
+            light.intensity = currentIntensity;
 
             // Wait for a frame
             yield return null;
@@ -296,8 +297,9 @@ public class GameManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
         }
 
-        // Disable the GameObject when the fade out is complete
-        image.gameObject.SetActive(false);
+        // Set the final intensity value of the light
+        light.intensity = endIntensity;
+
     }
 
     public IEnumerator FadeInAndOutTextMesh(TextMeshProUGUI textMeshPro, float delayDuration, float fadeDuration)
@@ -320,9 +322,6 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator FadeAlphaTextMesh(TextMeshProUGUI textMeshPro, float startAlpha, float endAlpha, float duration)
     {
-        // Get the initial alpha of the text
-        float startingAlpha = textMeshPro.alpha;
-
         // Keep track of the elapsed time
         float elapsedTime = 0.0f;
 
@@ -347,7 +346,10 @@ public class GameManager : MonoBehaviour
 
     public void OnToggleLightButton()
     {
-        hullLight.SetActive(!hullLight.activeSelf);
+        if (startedGame)
+        {
+            hullLight.gameObject.SetActive(!hullLight.gameObject.activeSelf);
+        }
     }
 
     public void OnToggleManualBook()
