@@ -3,6 +3,10 @@ using LootLocker.Requests;
 using System.Collections;
 using TMPro;
 
+/// <summary>
+/// My class for connecting to LootLocker stuff. Not mistake with
+/// LootLockerSDKManager.
+/// </summary>
 public class LootLockerManager : MonoBehaviour
 {
     public string leaderboardKey = "Operation_SLRN";

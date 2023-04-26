@@ -28,7 +28,7 @@ public class SubmarineController : MonoBehaviour
 
     void Update()
     {
-        coordText.text = $"X:{transform.position.x}    Y:{transform.position.y}";
+        coordText.text = $"X:{transform.position.x}  Y:{transform.position.y}";
 
         if (Input.GetKeyDown(KeyCode.Q) && !GameManager.instance.disableSubmarineControl)
         {
@@ -40,7 +40,7 @@ public class SubmarineController : MonoBehaviour
         {
             engineEnable = !engineEnable;
             engineLight.volumeIntensityEnabled = engineEnable;
-            surroundLight.SetActive(engineEnable);
+            // surroundLight.SetActive(engineEnable);
             if (engineEnable)
             {
                 moveSpeed = normalSpeed;
