@@ -2,6 +2,7 @@ using UnityEngine;
 using LootLocker.Requests;
 using System.Collections;
 using TMPro;
+using System.Collections.Generic;
 
 /// <summary>
 /// My class for connecting to LootLocker stuff. Not mistake with
@@ -14,9 +15,12 @@ public class LootLockerManager : MonoBehaviour
     public GameObject entryPrefab;
     public Transform entryHolder;
     private int maxEntriesInPage = 10;
-    private LootLockerLeaderboardMember[] leaderboardScores;
+    private List<int> leaderboardScores = new List<int>();
+    private List<string> leaderboardNames = new List<string>();
+
     private int pageIndex = 0;
     private Coroutine listScoreCoroutine;
+    public GameObject leaderboardLoadingIndicator;
 
 
     void Start()
@@ -85,20 +89,35 @@ public class LootLockerManager : MonoBehaviour
         {
             if (response.success)
             {
-                Debug.Log("Player was logged in");
+                Debug.Log($"Player was logged in as {response.player_id}");
                 done = true;
+
+                // If first time, create a random name
+                if (PlayerPrefs.GetString("PlayerName", "") == "")
+                {
+                    // The character limit for the Name INput component is 15
+                    // so it should be fine. If not, increase the limit.
+                    GameManager.instance.AssignGuestNameToInputField($"Sailor#{response.player_id}", false);
+                }
             }
             else
             {
                 Debug.Log("Could not start session");
+                GameManager.instance.AssignGuestNameToInputField("Anonymous", true);
             }
         });
+
+
         yield return new WaitWhile(() => done == false);
     }
 
     public IEnumerator SubmitScoreRoutine(int scoreToUpload, string playerName)
     {
-        yield return new WaitForSeconds(2f);
+        if (playerName.Trim() == "")
+        {
+            yield return null;
+        }
+
         bool done = false;
         LootLockerSDKManager.SubmitScore(playerName, scoreToUpload, leaderboardKey, (response) =>
         {
@@ -130,13 +149,13 @@ public class LootLockerManager : MonoBehaviour
         {
             TextMeshProUGUI entry = Instantiate(entryPrefab, entryHolder).GetComponent<TextMeshProUGUI>();
             yield return new WaitForSeconds(0.1f);
-            if (i > leaderboardScores.Length - 1)
+            if (i > leaderboardScores.Count - 1)
             {
                 entry.text = (i + 1).ToString().PadLeft(3) + " - ";
             }
             else
             {
-                entry.text = leaderboardScores[i].rank.ToString().PadLeft(3) + " - " + leaderboardScores[i].member_id + " - " + leaderboardScores[i].score;
+                entry.text = (i + 1).ToString().PadLeft(3) + " - " + leaderboardNames[i] + " - " + leaderboardScores[i];
             }
         }
         yield return null;
@@ -145,12 +164,19 @@ public class LootLockerManager : MonoBehaviour
     public IEnumerator LoadLeaderboardScores()
     {
         bool done = false;
+        leaderboardLoadingIndicator.SetActive(true);
         LootLockerSDKManager.GetScoreList(leaderboardKey, 50, (response) =>
         {
             if (response.success)
             {
                 Debug.Log("Successfully get leaderboard score");
-                leaderboardScores = response.items;
+                leaderboardNames.Clear();
+                leaderboardScores.Clear();
+                foreach (var item in response.items)
+                {
+                    leaderboardNames.Add(item.member_id);
+                    leaderboardScores.Add(item.score);
+                }
                 done = true;
             }
             else
@@ -160,6 +186,7 @@ public class LootLockerManager : MonoBehaviour
             }
         });
         yield return new WaitWhile(() => done == false);
+        leaderboardLoadingIndicator.SetActive(false);
         if (listScoreCoroutine != null)
             StopCoroutine(listScoreCoroutine);
         listScoreCoroutine = StartCoroutine(ListScoreEntries());

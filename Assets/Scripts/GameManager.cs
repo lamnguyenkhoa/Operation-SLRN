@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public bool startedGame = false;
     public bool endedGame = false;
     public bool isInLeaderboard = false;
+    private string guestName;
 
     [Header("Entity")]
     public int startOreNumber = 20;
@@ -70,6 +71,10 @@ public class GameManager : MonoBehaviour
     public GameObject[] objectToEnableAfterStart;
     public GameObject bookPageHolder;
     public LootLockerManager lootLockerManager;
+    public TextMeshProUGUI[] textMeshProsToFade; // Same as TextMeshProUGUI. I want to try.
+    public TMP_InputField nameInputField;
+    public TextMeshProUGUI operatorNameDisplay;
+
 
 
     void Awake()
@@ -93,33 +98,30 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        TextMeshProUGUI[] textMeshPros = startScreen.GetComponentsInChildren<TextMeshProUGUI>();
-        foreach (TextMeshProUGUI textMeshPro in textMeshPros)
+        foreach (TextMeshProUGUI textMeshPro in textMeshProsToFade)
         {
             StartCoroutine(FadeInAndOutTextMesh(textMeshPro, 0.2f, 2f));
         }
         oxygenTimeLeft = oxygenMaxTime;
+        if (PlayerPrefs.GetString("PlayerName", "") != "")
+        {
+            nameInputField.text = PlayerPrefs.GetString("PlayerName");
+        }
+
     }
 
     void Update()
     {
-        if (!startedGame)
+        if (!startedGame && !endedGame)
         {
-            if (Input.GetKeyDown(KeyCode.E) && !isInLeaderboard)
+            // Prevent start game while typing name
+            if (!nameInputField.isFocused)
             {
-                StartGame();
-            }
-            if (Input.GetKeyDown(KeyCode.E) && isInLeaderboard)
-            {
-                isInLeaderboard = false;
-                startScreen.SetActive(true);
-                lootLockerManager.CloseLeaderboard();
-            }
-            if (Input.GetKeyDown(KeyCode.Q) && !isInLeaderboard)
-            {
-                isInLeaderboard = true;
-                startScreen.SetActive(false);
-                lootLockerManager.OpenLeaderboard();
+                if (Input.GetKeyDown(KeyCode.E) && !isInLeaderboard)
+                {
+                    StartGame();
+                }
+                CheckPressQForLeaderboard();
             }
         }
 
@@ -140,6 +142,11 @@ public class GameManager : MonoBehaviour
             {
                 OnToggleJournalBook();
             }
+        }
+
+        if (startedGame && endedGame)
+        {
+            CheckPressQForLeaderboard();
         }
     }
 
@@ -279,6 +286,8 @@ public class GameManager : MonoBehaviour
         if (hideCrack)
             gameOverScreen.GetComponent<GameOverMenu>().HideCracks();
         submarine.gameObject.SetActive(false);
+
+        StartCoroutine(lootLockerManager.SubmitScoreRoutine(score, PlayerPrefs.GetString("PlayerName")));
     }
 
     public void RefreshSideScreen()
@@ -294,6 +303,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         RefreshScoreText();
+        operatorNameDisplay.text = "Operator: " + PlayerPrefs.GetString("PlayerName");
         scoreText.gameObject.SetActive(true);
         sideScreenText.gameObject.SetActive(true);
         coordText.gameObject.SetActive(true);
@@ -429,5 +439,47 @@ public class GameManager : MonoBehaviour
     public void OpenUpgradeMenu()
     {
         isUpgrading = true;
+    }
+
+    public void AssignGuestNameToInputField(string playerName, bool placeholder)
+    {
+        guestName = playerName;
+
+        // Prevent update name while player is editing them
+        if (!nameInputField.isFocused)
+        {
+            PlayerPrefs.SetString("PlayerName", playerName);
+            if (placeholder)
+                nameInputField.placeholder.GetComponent<TextMeshProUGUI>().text = playerName;
+            else
+                nameInputField.text = playerName;
+        }
+    }
+
+    public void OnNameInputFieldChange(string playerName)
+    {
+        PlayerPrefs.SetString("PlayerName", playerName);
+    }
+
+    public void CheckPressQForLeaderboard()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && isInLeaderboard)
+        {
+            isInLeaderboard = false;
+            lootLockerManager.CloseLeaderboard();
+            if (endedGame)
+                gameOverScreen.SetActive(true);
+            else
+                startScreen.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.Q) && !isInLeaderboard)
+        {
+            isInLeaderboard = true;
+            lootLockerManager.OpenLeaderboard();
+            if (endedGame)
+                gameOverScreen.SetActive(false);
+            else
+                startScreen.SetActive(false);
+        }
     }
 }

@@ -14,25 +14,31 @@ public class GameOverMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Vertical"))
+        // Maybe I should just delete this script and put GameOverMenu control
+        // inside GameManager too.
+        if (!GameManager.instance.isInLeaderboard)
         {
-            retry = !retry;
-            RefreshRetryText();
-        }
-
-        if (Input.GetKeyDown(KeyCode.E) ||
-            Input.GetKeyDown(KeyCode.Return) ||
-            Input.GetKeyDown(KeyCode.Space))
-        {
-            if (retry)
+            if (Input.GetButtonDown("Vertical"))
             {
-                Scene currentScene = SceneManager.GetActiveScene();
-                SceneManager.LoadScene(currentScene.name);
+                retry = !retry;
+                RefreshRetryText();
             }
-            else
+
+            if (Input.GetKeyDown(KeyCode.E) ||
+                Input.GetKeyDown(KeyCode.Return) ||
+                Input.GetKeyDown(KeyCode.Space))
             {
-                Application.Quit();
-                Debug.Log("Return to main menu...");
+
+                if (retry)
+                {
+                    Scene currentScene = SceneManager.GetActiveScene();
+                    SceneManager.LoadScene(currentScene.name);
+                }
+                else
+                {
+                    Application.Quit();
+                    Debug.Log("Return to main menu...");
+                }
             }
         }
     }
@@ -40,20 +46,14 @@ public class GameOverMenu : MonoBehaviour
     public void RefreshRetryText()
     {
         if (retry)
-        {
             retryText.text = "Retry? \n-YES- \nNO";
-        }
         else
-        {
             retryText.text = "Retry? \nYES \n-NO-";
-        }
     }
 
     public void HideCracks()
     {
         foreach (GameObject crack in cracks)
-        {
             crack.SetActive(false);
-        }
     }
 }
