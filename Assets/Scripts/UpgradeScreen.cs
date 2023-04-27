@@ -164,6 +164,7 @@ public class UpgradeScreen : MonoBehaviour
                 break;
         }
 
+        GameManager.instance.PlayUpgradeSound();
         GameManager.instance.RefreshSideScreen();
         RefreshUpgradeDescription();
         RefreshAvailability();

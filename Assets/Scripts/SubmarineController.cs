@@ -22,8 +22,6 @@ public class SubmarineController : MonoBehaviour
     public GameObject upgradeScreen;
     public TextMeshProUGUI speedMeter;
 
-
-
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -50,7 +48,6 @@ public class SubmarineController : MonoBehaviour
                 {
                     float bonus = 1 + (float)((GameManager.instance.speedLevel - 1) * 0.15);
                     moveSpeed = normalSpeed * bonus;
-
                 }
                 else
                 {

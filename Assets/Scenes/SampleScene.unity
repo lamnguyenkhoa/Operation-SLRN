@@ -9615,6 +9615,7 @@ MonoBehaviour:
   oreCollected: {fileID: 8300000, guid: 7f386a058f27edb4caf26b958d0622a4, type: 3}
   sonarPing: {fileID: 8300000, guid: 5c404fd3ff2a13f4fbf43fb74431b2bf, type: 3}
   bookFlipping: {fileID: 8300000, guid: d883e3654f34f2240883ef0f5215a888, type: 3}
+  upgradeSfx: {fileID: 8300000, guid: ba52ba91145d80049b484ab3979d342e, type: 3}
   bgmVolume: 1
   sfxVolume: 1
   scoreText: {fileID: 571589211}

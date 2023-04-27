@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     public AudioClip oreCollected;
     public AudioClip sonarPing;
     public AudioClip bookFlipping;
+    public AudioClip upgradeSfx;
     public float bgmVolume;
     public float sfxVolume;
 
@@ -289,6 +290,8 @@ public class GameManager : MonoBehaviour
         if (hideCrack)
             gameOverScreen.GetComponent<GameOverMenu>().HideCracks();
         submarine.gameObject.SetActive(false);
+        isInUpgradeMenu = false;
+        submarine.GetComponent<SubmarineController>().upgradeScreen.SetActive(false);
 
         StartCoroutine(lootLockerManager.SubmitScoreRoutine(score, PlayerPrefs.GetString("PlayerName")));
     }
@@ -508,5 +511,10 @@ public class GameManager : MonoBehaviour
             else
                 startScreen.SetActive(false);
         }
+    }
+
+    public void PlayUpgradeSound()
+    {
+        sfxAudioSource.PlayOneShot(upgradeSfx);
     }
 }
