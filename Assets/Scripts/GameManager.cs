@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI[] textMeshProsToFade; // Same as TextMeshProUGUI. I want to try.
     public TMP_InputField nameInputField;
     public TextMeshProUGUI operatorNameDisplay;
+    public Image mainScreenFade;
 
 
 
@@ -329,8 +330,11 @@ public class GameManager : MonoBehaviour
             SpawnNewEntity(proximityMinePrefab);
         for (int i = 0; i < startEnemySubmarine; i++)
             SpawnNewEntity(enemySubmarinePrefab);
-
         RefreshSideScreen();
+        StartCoroutine(FadeAlphaTextMesh(sideScreenText, 0f, 1f, 1f));
+        StartCoroutine(FadeAlphaTextMesh(scoreText, 0f, 1f, 1f));
+        StartCoroutine(FadeAlphaImage(mainScreenFade, 1f, 0f, 3f));
+
     }
 
     public IEnumerator FadeIntensityLight2D(Light2D light, float startIntensity, float endIntensity, float duration)
@@ -355,7 +359,27 @@ public class GameManager : MonoBehaviour
 
         // Set the final intensity value of the light
         light.intensity = endIntensity;
+    }
 
+    public IEnumerator FadeAlphaImage(Image image, float startAlpha, float endAlpha, float duration)
+    {
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < duration)
+        {
+            float currentAlpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / duration);
+            Color updateColor = image.color;
+            updateColor.a = currentAlpha;
+            image.color = updateColor;
+
+            yield return null;
+
+            elapsedTime += Time.deltaTime;
+        }
+
+        Color finalColor = image.color;
+        finalColor.a = endAlpha;
+        image.color = finalColor;
     }
 
     public IEnumerator FadeInAndOutTextMesh(TextMeshProUGUI textMeshPro, float delayDuration, float fadeDuration)
