@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public bool startedGame = false;
     public bool endedGame = false;
     public bool isInLeaderboard = false;
+    public bool isInUpgradeMenu = false;
     private string guestName;
 
     [Header("Entity")]
@@ -27,7 +28,6 @@ public class GameManager : MonoBehaviour
     public GameObject smallEnemyPrefab;
     public GameObject proximityMinePrefab;
     public GameObject enemySubmarinePrefab;
-
     public Transform entityHolder;
 
     [Header("Submarine")]
@@ -37,8 +37,8 @@ public class GameManager : MonoBehaviour
     private float iframeTimer;
     public float iframeDuration = 1f;
     public int speedLevel = 1;
-    public int sonarSpeedLevel = 1;
-    public int sonarRangeLevel = 1;
+    public int sonarLevel = 1;
+    public int excavatorLevel = 1;
     public float oxygenTimeLeft;
     public float oxygenMaxTime = 600f; // 10 minute
     public bool disableSubmarineControl = false;
@@ -52,7 +52,6 @@ public class GameManager : MonoBehaviour
     public AudioClip oreCollected;
     public AudioClip sonarPing;
     public AudioClip bookFlipping;
-
     public float bgmVolume;
     public float sfxVolume;
 
@@ -165,7 +164,10 @@ public class GameManager : MonoBehaviour
 
     public void CollectOre()
     {
-        score += oreScoreGain;
+        // For every excavatorLevel beyond 1, +25% value;
+        float bonus = 1 + (float)((GameManager.instance.excavatorLevel - 1) * 0.25);
+
+        score += (int)Mathf.Round(oreScoreGain * bonus);
         accumulatedScore += oreScoreGain;
 
         sfxAudioSource.PlayOneShot(oreCollected, 0.3f);
@@ -293,12 +295,13 @@ public class GameManager : MonoBehaviour
 
     public void RefreshSideScreen()
     {
-        string hullText = "".PadRight(currentSubmarineHp, '|');
-        string engineText = "".PadRight(speedLevel, '|');
-        string sonarSpeedText = "".PadRight(sonarSpeedLevel, '|');
-        string sonarRangeText = "".PadRight(sonarRangeLevel, '|');
+        string hullLvText = "".PadRight(currentSubmarineHp, '|');
+        string engineLvText = "".PadRight(speedLevel, '|');
+        string sonarLvText = "".PadRight(sonarLevel, '|');
+        string excavatorLvText = "".PadRight(excavatorLevel, '|');
 
-        sideScreenText.text = $"hull\n{hullText}\nengine\n{engineText}\nsonar-speed\n{sonarSpeedText}\nsonar-range\n{sonarRangeText}";
+        sideScreenText.text = $"hull\n{hullLvText}\nengine\n{engineLvText}\nsonar" +
+            $"\n{sonarLvText}\nexcavator\n{excavatorLvText}";
     }
 
     public void StartGame()

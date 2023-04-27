@@ -7,7 +7,9 @@ public class SonarManager : MonoBehaviour
 
     void Update()
     {
-        float rotationAmount = rotationSpeed * Time.deltaTime;
+        // For every sonarLevel beyond 1, +25% rotate speed;
+        float bonus = 1 + (float)((GameManager.instance.sonarLevel - 1) * 0.25);
+        float rotationAmount = rotationSpeed * bonus * Time.deltaTime;
         transform.Rotate(Vector3.back * rotationAmount);
         totalRotationAngle += rotationAmount;
 

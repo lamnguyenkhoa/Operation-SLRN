@@ -46,9 +46,9 @@ public class GameOverMenu : MonoBehaviour
     public void RefreshRetryText()
     {
         if (retry)
-            retryText.text = "Retry? \n-YES- \nNO";
+            retryText.text = "Retry? \n>YES< \nNO";
         else
-            retryText.text = "Retry? \nYES \n-NO-";
+            retryText.text = "Retry? \nYES \n>NO<";
     }
 
     public void HideCracks()

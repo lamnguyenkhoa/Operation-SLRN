@@ -19,6 +19,10 @@ public class SubmarineController : MonoBehaviour
     public bool engineEnable = true;
     public GameObject surroundLight;
     public GameObject sonarRotate;
+    public GameObject upgradeScreen;
+    public TextMeshProUGUI speedMeter;
+
+
 
     void Start()
     {
@@ -30,24 +34,39 @@ public class SubmarineController : MonoBehaviour
     {
         coordText.text = $"X:{transform.position.x}  Y:{transform.position.y}";
 
-        if (Input.GetKeyDown(KeyCode.Q) && !GameManager.instance.disableSubmarineControl)
+        if (!GameManager.instance.disableSubmarineControl)
         {
-            sonarEnable = !sonarEnable;
-            sonarLight.volumeIntensityEnabled = sonarEnable;
-            sonarRotate.SetActive(sonarEnable);
-        }
-        if (Input.GetKeyDown(KeyCode.E) && !GameManager.instance.disableSubmarineControl)
-        {
-            engineEnable = !engineEnable;
-            engineLight.volumeIntensityEnabled = engineEnable;
-            // surroundLight.SetActive(engineEnable);
-            if (engineEnable)
+            if (Input.GetKeyDown(KeyCode.Q) && !GameManager.instance.isInUpgradeMenu)
             {
-                moveSpeed = normalSpeed;
+                sonarEnable = !sonarEnable;
+                sonarLight.volumeIntensityEnabled = sonarEnable;
+                sonarRotate.SetActive(sonarEnable);
             }
-            else
+            if (Input.GetKeyDown(KeyCode.E) && !GameManager.instance.isInUpgradeMenu)
             {
-                moveSpeed = engineOffSpeed;
+                engineEnable = !engineEnable;
+                engineLight.volumeIntensityEnabled = engineEnable;
+                if (engineEnable)
+                {
+                    float bonus = 1 + (float)((GameManager.instance.speedLevel - 1) * 0.15);
+                    moveSpeed = normalSpeed * bonus;
+
+                }
+                else
+                {
+                    float bonus = 1 + (float)((GameManager.instance.speedLevel - 1) * 0.15);
+                    moveSpeed = engineOffSpeed * bonus;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.R) && !GameManager.instance.isInUpgradeMenu)
+            {
+                GameManager.instance.isInUpgradeMenu = true;
+                upgradeScreen.SetActive(true);
+            }
+            else if (Input.GetKeyDown(KeyCode.R) && GameManager.instance.isInUpgradeMenu)
+            {
+                GameManager.instance.isInUpgradeMenu = false;
+                upgradeScreen.SetActive(false);
             }
         }
     }
@@ -55,7 +74,7 @@ public class SubmarineController : MonoBehaviour
     void FixedUpdate()
     {
         // Get the horizontal and vertical input axes
-        if (!GameManager.instance.disableSubmarineControl)
+        if (!GameManager.instance.disableSubmarineControl && !GameManager.instance.isInUpgradeMenu)
         {
             moveHorizontal = Input.GetAxis("Horizontal");
             moveVertical = Input.GetAxis("Vertical");
@@ -83,6 +102,22 @@ public class SubmarineController : MonoBehaviour
 
         // Move the player based on the input axes
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
+        if (movement.magnitude > 1f)
+        {
+            movement.Normalize();
+        }
         rb.velocity = movement * moveSpeed;
+        int speed = (int)Mathf.Round((float)rb.velocity.magnitude * 10);
+        speedMeter.text = speed.ToString();
+    }
+
+    public void UpdateSpeedBonus()
+    {
+        // For every speedLevel beyond 1, +15% move speed;
+        float bonus = 1 + (float)((GameManager.instance.speedLevel - 1) * 0.15);
+        if (engineEnable)
+            moveSpeed = normalSpeed * bonus;
+        else
+            moveSpeed = engineOffSpeed * bonus;
     }
 }
