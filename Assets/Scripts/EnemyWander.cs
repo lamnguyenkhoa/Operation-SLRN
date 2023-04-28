@@ -24,8 +24,9 @@ public class EnemyWander : UnderwaterEntity
     public float distanceUntilStopChase = 10f; // Enemy stop chasing submarine outside this range
     private float tiredTimer;
     public float timeInTiredMood = 2f;
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         wanderTimer = Random.Range(minTime, maxTime);  // set the initial timer to a random value
         wanderDirection = Random.insideUnitCircle.normalized;  // set the initial direction to a random vector of length 1
         rb = GetComponent<Rigidbody2D>();  // get the rigidbody component
@@ -53,9 +54,6 @@ public class EnemyWander : UnderwaterEntity
                 {
                     wanderDirection = Random.insideUnitCircle.normalized;  // set the new direction to a random vector of length 1
                     wanderTimer = Random.Range(minTime, maxTime);  // reset the timer to a random value
-
-                    // Self pulse
-                    Pulse(true);
                 }
                 break;
             case EnemyMood.CHASING:

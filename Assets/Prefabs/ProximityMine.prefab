@@ -101,7 +101,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pulseEffectPrefab: {fileID: 8668875158865517778, guid: 5941ea9eac0625345934ccdc2e0862ea, type: 3}
-  selfPulseInterval: 1
+  selfPulse: 1
+  selfPulseIntervalMin: 2
+  selfPulseIntervalMax: 2
   explodeSfx: {fileID: 8300000, guid: 3ae0348d57256a046af45bf4ef55eb9d, type: 3}
   explosionPulse: {fileID: 8668875158865517778, guid: 8ee4c49d60e7768488aeef82920042a7, type: 3}
 --- !u!50 &553906612667895833

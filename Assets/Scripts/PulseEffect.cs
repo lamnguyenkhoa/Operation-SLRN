@@ -15,6 +15,7 @@ public class PulseEffect : MonoBehaviour
 
     private void Start()
     {
+        // You want the current alpha (from the sprite renderer) to start at 0
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentScale = startScale;
         currentAlpha = startAlpha;

@@ -101,6 +101,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pulseEffectPrefab: {fileID: 8668875158865517778, guid: 220e8c8837529064c94116221615c23f, type: 3}
+  selfPulse: 1
+  selfPulseIntervalMin: 6
+  selfPulseIntervalMax: 8
   moveSpeed: 1
   wanderSpeed: 1
   chaseSpeed: 1.5

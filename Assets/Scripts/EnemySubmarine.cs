@@ -19,20 +19,15 @@ public class EnemySubmarine : UnderwaterEntity
     private float tiredTimer;
     public float timeInTiredMood = 2f;
     private bool continueChaseAfterTired = false;
-
-    private float selfPulseTimer;
-    public float selfPulseInterval = 2f;
     private float shootTorpedoTimer;
     public float shootTorpedoInterval = 5f;
     public GameObject torpedoPrefab;
     public Transform torpedoSpawn;
     public GameObject sonarDetectedPulse; // bigger pulse
 
-
-
-
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         wanderTimer = Random.Range(minTime, maxTime);  // set the initial timer to a random value
         wanderDirection = Random.insideUnitCircle.normalized;  // set the initial direction to a random vector of length 1
         rb = GetComponent<Rigidbody2D>();  // get the rigidbody component
@@ -42,13 +37,6 @@ public class EnemySubmarine : UnderwaterEntity
     {
         float angle;
         float targetAngle;
-
-        selfPulseTimer += Time.deltaTime;
-        if (selfPulseTimer > selfPulseInterval)
-        {
-            Pulse(true);
-            selfPulseTimer = 0f;
-        }
 
         switch (mood)
         {

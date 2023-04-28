@@ -3,8 +3,6 @@ using UnityEngine.U2D;
 
 public class Torpedo : UnderwaterEntity
 {
-    private float selfPulseTimer;
-    public float selfPulseInterval = 0.2f;
     private float lifetimeTimer;
     public float lifeTimeDuration = 6f;
     public float speed = 5f;
@@ -26,19 +24,12 @@ public class Torpedo : UnderwaterEntity
     protected override void Update()
     {
         base.Update();
-        selfPulseTimer += Time.deltaTime;
-        if (selfPulseTimer > selfPulseInterval)
-        {
-            Pulse(true);
-            selfPulseTimer = 0f;
-        }
         lifetimeTimer += Time.deltaTime;
         if (lifetimeTimer > lifeTimeDuration)
         {
             Destroy(this.gameObject);
         }
     }
-
 
     protected override void OnTriggerEnter2D(Collider2D col)
     {

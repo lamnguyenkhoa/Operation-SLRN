@@ -2,22 +2,8 @@ using UnityEngine;
 
 public class ProximityMine : UnderwaterEntity
 {
-    private float selfPulseTimer;
-    public float selfPulseInterval = 2f;
     public AudioClip explodeSfx;
     public GameObject explosionPulse;
-
-
-    protected override void Update()
-    {
-        base.Update();
-        selfPulseTimer += Time.deltaTime;
-        if (selfPulseTimer > selfPulseInterval)
-        {
-            Pulse(true);
-            selfPulseTimer = 0f;
-        }
-    }
 
     public void Explode()
     {
