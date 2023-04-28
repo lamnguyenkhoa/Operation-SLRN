@@ -77,7 +77,6 @@ public class GameManager : MonoBehaviour
     public Image mainScreenFade;
 
 
-
     void Awake()
     {
         if (!instance)
@@ -290,6 +289,7 @@ public class GameManager : MonoBehaviour
         if (hideCrack)
             gameOverScreen.GetComponent<GameOverMenu>().HideCracks();
         submarine.gameObject.SetActive(false);
+        coordText.gameObject.SetActive(false);
         isInUpgradeMenu = false;
         submarine.GetComponent<SubmarineController>().upgradeScreen.SetActive(false);
 
