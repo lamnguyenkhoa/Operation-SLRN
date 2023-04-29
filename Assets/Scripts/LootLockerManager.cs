@@ -21,7 +21,8 @@ public class LootLockerManager : MonoBehaviour
     private int pageIndex = 0;
     private Coroutine listScoreCoroutine;
     public GameObject leaderboardLoadingIndicator;
-
+    public GameObject upIndicator;
+    public GameObject downIndicator;
 
     void Start()
     {
@@ -56,8 +57,10 @@ public class LootLockerManager : MonoBehaviour
                             StopCoroutine(listScoreCoroutine);
                         listScoreCoroutine = StartCoroutine(ListScoreEntries());
                     }
-
                 }
+
+                // Indicator to show that next 10 score entries are available.
+                RefreshPageIndicator();
             }
         }
     }
@@ -187,9 +190,23 @@ public class LootLockerManager : MonoBehaviour
         });
         yield return new WaitWhile(() => done == false);
         leaderboardLoadingIndicator.SetActive(false);
+        RefreshPageIndicator();
         if (listScoreCoroutine != null)
             StopCoroutine(listScoreCoroutine);
         listScoreCoroutine = StartCoroutine(ListScoreEntries());
         yield return null;
+    }
+
+    private void RefreshPageIndicator()
+    {
+        if (pageIndex == 0)
+            upIndicator.SetActive(false);
+        else
+            upIndicator.SetActive(true);
+
+        if (pageIndex == 4)
+            downIndicator.SetActive(false);
+        else
+            downIndicator.SetActive(true);
     }
 }

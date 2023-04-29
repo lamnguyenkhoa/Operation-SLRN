@@ -290,6 +290,7 @@ public class GameManager : MonoBehaviour
             gameOverScreen.GetComponent<GameOverMenu>().HideCracks();
         submarine.gameObject.SetActive(false);
         coordText.gameObject.SetActive(false);
+        helpText.gameObject.SetActive(false);
         isInUpgradeMenu = false;
         submarine.GetComponent<SubmarineController>().upgradeScreen.SetActive(false);
 
